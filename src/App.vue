@@ -1,37 +1,169 @@
 <template>
   <v-app>
-    <v-toolbar app>
-      <v-toolbar-title class="headline text-uppercase">
-        <span>Vuetify</span>
-        <span class="font-weight-light">MATERIAL DESIGN</span>
-      </v-toolbar-title>
-      <v-spacer></v-spacer>
-      <v-btn
-        flat
-        href="https://github.com/vuetifyjs/vuetify/releases/latest"
-        target="_blank"
-      >
-        <span class="mr-2">Latest Release</span>
-      </v-btn>
-    </v-toolbar>
-
     <v-content>
-      <HelloWorld/>
+      <h1>Punk</h1>
+      <v-container>
+        <template>
+          <v-data-table :headers="headers" :items="desserts" :pagination.sync="pagination" item-key="name" class="elevation-1">
+            <template slot="items" slot-scope="props">
+              <tr @click="rowClick(props.item.name)">
+                <td>{{ props.item.name }}</td>
+                <td class="text-xs-right">{{ props.item.calories }}</td>
+                <td class="text-xs-right">{{ props.item.fat }}</td>
+                <td class="text-xs-right">{{ props.item.carbs }}</td>
+                <td class="text-xs-right">{{ props.item.protein }}</td>
+                <td class="text-xs-right">{{ props.item.iron }}</td>
+              </tr>
+            </template>
+          </v-data-table>
+        </template>
+      </v-container>
+      <v-container>
+        <v-card>
+          <v-card-text>
+            <div>{{ selectedItem }}</div>
+          </v-card-text>
+        </v-card>
+      </v-container>
     </v-content>
   </v-app>
 </template>
 
 <script>
-import HelloWorld from './components/HelloWorld'
-
+const url = `https://api.punkapi.com/v2/beers?malt=extra_pale`;
 export default {
   name: 'App',
-  components: {
-    HelloWorld
+  methods: {
+    fetchData: function() {
+      this.error = false;
+
+      fetch(url).then(res => res.json()).then(data => {
+          this.items = data;
+      }).catch(err => {
+        this.error = true;
+      });
+    },
+    rowClick: function(name) {
+      this.selectedItem = name;
+    }
+  },
+  mounted () {
+    this.fetchData();
   },
   data () {
     return {
-      //
+      items: {},
+      error: false,
+      selectedItem: "Sample",
+      pagination: {
+        sortBy: 'name'
+      },
+      headers: [
+        {
+          text: 'Dessert (100g serving)',
+          align: 'left',
+          sortable: false,
+          value: 'name',
+          width: '20%'
+        },
+        { text: 'Calories', value: 'calories', width: '16%' },
+        { text: 'Fat (g)', value: 'fat', width: '16%' },
+        { text: 'Carbs (g)', value: 'carbs', width: '16%' },
+        { text: 'Protein (g)', value: 'protein', width: '16%' },
+        { text: 'Iron (%)', value: 'iron', width: '16%' }
+      ],
+      desserts: [
+        {
+          value: false,
+          name: 'Frozen Yogurt',
+          calories: 159,
+          fat: 6.0,
+          carbs: 24,
+          protein: 4.0,
+          iron: '1%'
+        },
+        {
+          value: false,
+          name: 'Ice cream sandwich',
+          calories: 237,
+          fat: 9.0,
+          carbs: 37,
+          protein: 4.3,
+          iron: '1%'
+        },
+        {
+          value: false,
+          name: 'Eclair',
+          calories: 262,
+          fat: 16.0,
+          carbs: 23,
+          protein: 6.0,
+          iron: '7%'
+        },
+        {
+          value: false,
+          name: 'Cupcake',
+          calories: 305,
+          fat: 3.7,
+          carbs: 67,
+          protein: 4.3,
+          iron: '8%'
+        },
+        {
+          value: false,
+          name: 'Gingerbread',
+          calories: 356,
+          fat: 16.0,
+          carbs: 49,
+          protein: 3.9,
+          iron: '16%'
+        },
+        {
+          value: false,
+          name: 'Jelly bean',
+          calories: 375,
+          fat: 0.0,
+          carbs: 94,
+          protein: 0.0,
+          iron: '0%'
+        },
+        {
+          value: false,
+          name: 'Lollipop',
+          calories: 392,
+          fat: 0.2,
+          carbs: 98,
+          protein: 0,
+          iron: '2%'
+        },
+        {
+          value: false,
+          name: 'Honeycomb',
+          calories: 408,
+          fat: 3.2,
+          carbs: 87,
+          protein: 6.5,
+          iron: '45%'
+        },
+        {
+          value: false,
+          name: 'Donut',
+          calories: 452,
+          fat: 25.0,
+          carbs: 51,
+          protein: 4.9,
+          iron: '22%'
+        },
+        {
+          value: false,
+          name: 'KitKat',
+          calories: 518,
+          fat: 26.0,
+          carbs: 65,
+          protein: 7,
+          iron: '6%'
+        }
+      ]
     }
   }
 }
