@@ -4,26 +4,18 @@
       <h1>Punk</h1>
       <v-container>
         <template>
-          <v-data-table :headers="headers" :items="desserts" :pagination.sync="pagination" item-key="name" class="elevation-1">
+          <v-data-table :headers="headers" :items="beers" :pagination.sync="pagination" item-key="name" class="elevation-1">
             <template slot="items" slot-scope="props">
               <tr @click="rowClick(props.item.name)">
+                <td><img :src="props.item.image_url" height="70"/></td>
                 <td>{{ props.item.name }}</td>
-                <td class="text-xs-right">{{ props.item.calories }}</td>
-                <td class="text-xs-right">{{ props.item.fat }}</td>
-                <td class="text-xs-right">{{ props.item.carbs }}</td>
-                <td class="text-xs-right">{{ props.item.protein }}</td>
-                <td class="text-xs-right">{{ props.item.iron }}</td>
+                <td>{{ props.item.tagline }}</td>
+                <td>{{ props.item.first_brewed }}</td>
+                <td>{{ props.item.description }}</td>
               </tr>
             </template>
           </v-data-table>
         </template>
-      </v-container>
-      <v-container>
-        <v-card>
-          <v-card-text>
-            <div>{{ selectedItem }}</div>
-          </v-card-text>
-        </v-card>
       </v-container>
     </v-content>
   </v-app>
@@ -31,6 +23,7 @@
 
 <script>
 const url = `https://api.punkapi.com/v2/beers?malt=extra_pale`;
+
 export default {
   name: 'App',
   methods: {
@@ -38,9 +31,9 @@ export default {
       this.error = false;
 
       fetch(url).then(res => res.json()).then(data => {
-          this.items = data;
+          this.beers = data;
       }).catch(err => {
-        this.error = true;
+        this.error = err;
       });
     },
     rowClick: function(name) {
@@ -52,25 +45,24 @@ export default {
   },
   data () {
     return {
-      items: {},
+      beers: [],
       error: false,
       selectedItem: "Sample",
       pagination: {
         sortBy: 'name'
       },
       headers: [
+        {value: 'image_url', sortable: false, width: '10%'},
         {
-          text: 'Dessert (100g serving)',
+          text: 'Name',
           align: 'left',
           sortable: false,
           value: 'name',
           width: '20%'
         },
-        { text: 'Calories', value: 'calories', width: '16%' },
-        { text: 'Fat (g)', value: 'fat', width: '16%' },
-        { text: 'Carbs (g)', value: 'carbs', width: '16%' },
-        { text: 'Protein (g)', value: 'protein', width: '16%' },
-        { text: 'Iron (%)', value: 'iron', width: '16%' }
+        { text: 'Tagline', value: 'tagline', width: '10%' },
+        { text: 'First brewed', value: 'first_brewed', width: '10%' },
+        { text: 'Description', value: 'description', width: '50%' }
       ],
       desserts: [
         {
