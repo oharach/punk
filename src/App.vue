@@ -3,14 +3,16 @@
     <v-content>
       <h1>Punk</h1>
       <v-container>
+        <v-switch :label="'Only Strong beers'" v-model="strong" color="success" @change="filterData()"></v-switch>
         <template>
           <v-data-table :headers="headers" :items="beers" :pagination.sync="pagination" item-key="name" class="elevation-1">
             <template slot="items" slot-scope="props">
-              <tr @click="rowClick(props.item.name)">
+              <tr>
                 <td><img :src="props.item.image_url" height="70"/></td>
                 <td>{{ props.item.name }}</td>
                 <td>{{ props.item.tagline }}</td>
                 <td>{{ props.item.first_brewed }}</td>
+                <td>{{ props.item.abv }}&nbsp;%</td>
                 <td>{{ props.item.description }}</td>
               </tr>
             </template>
@@ -22,12 +24,12 @@
 </template>
 
 <script>
-const url = `https://api.punkapi.com/v2/beers?malt=extra_pale`;
+const api = `https://api.punkapi.com/v2/beers?per_page=50&malt=extra_pale`;
 
 export default {
   name: 'App',
   methods: {
-    fetchData: function() {
+    fetchData: function(url) {
       this.error = false;
 
       fetch(url).then(res => res.json()).then(data => {
@@ -36,17 +38,24 @@ export default {
         this.error = err;
       });
     },
-    rowClick: function(name) {
-      this.selectedItem = name;
+    filterData: function() {
+      // this.selectedItem = name;
+      if (this.strong === false) {
+        this.fetchData(api);
+      } else {
+        this.fetchData(api+'&abv_gt=7');
+      }
+
     }
   },
   mounted () {
-    this.fetchData();
+    this.fetchData(api);
   },
   data () {
     return {
       beers: [],
       error: false,
+      strong: false,
       selectedItem: "Sample",
       pagination: {
         sortBy: 'name'
@@ -62,7 +71,8 @@ export default {
         },
         { text: 'Tagline', value: 'tagline', width: '10%' },
         { text: 'First brewed', value: 'first_brewed', width: '10%' },
-        { text: 'Description', value: 'description', width: '50%' }
+        { text: 'Alcohol by volume', value: 'abv', width: '10%' },
+        { text: 'Description', value: 'description', width: '40%' }
       ],
       desserts: [
         {
